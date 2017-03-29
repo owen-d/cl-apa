@@ -7,6 +7,10 @@ const _ = require('lodash');
 
 utils.fetchApartments()
   .then(matches => {
-    console.log(matches[100])
-    console.log('hit', matches.length)
+    console.log('hit', matches.length);
+    utils.fetchIndividualListing(matches[88])
+      .then(utils.transformPage)
+      .then(x => {
+        console.log(x)
+      });
   });

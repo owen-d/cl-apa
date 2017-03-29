@@ -131,6 +131,12 @@ hawk@~3.1.3:
     hoek "2.x.x"
     sntp "1.x.x"
 
+himalaya@^0.2.6:
+  version "0.2.6"
+  resolved "https://registry.yarnpkg.com/himalaya/-/himalaya-0.2.6.tgz#632ecbb55cdca472b549c1bc05296510e9b4438c"
+  dependencies:
+    paul "0.0.3"
+
 hoek@2.x.x:
   version "2.16.3"
   resolved "https://registry.yarnpkg.com/hoek/-/hoek-2.16.3.tgz#20bb7403d3cea398e91dc4710a8ff1b8274a25ed"
@@ -209,6 +215,10 @@ oauth-sign@~0.8.1:
 options@>=0.0.5:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/options/-/options-0.0.6.tgz#ec22d312806bb53e731773e7cdaefcf1c643128f"
+
+paul@0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/paul/-/paul-0.0.3.tgz#7fbef33df6936c050cb7e9c00c22cbd110b7bb4f"
 
 performance-now@^0.2.0:
   version "0.2.0"
