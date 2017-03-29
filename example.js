@@ -7,6 +7,6 @@ const _ = require('lodash');
 
 utils.fetchApartments()
   .then(matches => {
-    console.log(matches[4940])
+    console.log(matches[100])
     console.log('hit', matches.length)
   });
