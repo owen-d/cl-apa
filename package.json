@@ -1,0 +1,23 @@
+{
+  "name": "cl-apa",
+  "version": "1.0.0",
+  "description": "crawl craigslist for apt notifications!",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": "https://github.com/owen-d/cl-apa.git",
+  "author": "Owen Diehl <ow.diehl@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/owen-d/cl-apa/issues"
+  },
+  "homepage": "https://github.com/owen-d/cl-apa",
+  "dependencies": {
+    "bluebird": "^3.5.0",
+    "lodash": "^4.17.4",
+    "request": "^2.81.0",
+    "slack": "^8.2.6",
+    "turf-distance": "^3.0.12"
+  }
+}
