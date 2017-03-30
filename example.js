@@ -5,10 +5,13 @@ const utils = require('./lib/');
 const url = require('url');
 const _ = require('lodash');
 const fs = require('fs');
+const moment = require('moment-timezone');
 
-utils.fetchApartments()
+utils.fetchApartments({
+  notAfterUnixDate: moment().subtract(1, 'hours').unix()
+})
   .then(matches => {
-    utils.fetchIndividualListing(matches[88])
+    utils.fetchIndividualListing(_.shuffle(matches)[0])
       .then(utils.transformPage)
       .then(x => {
         let comparator = elem => elem.attributes && elem.attributes.id && elem.attributes.id.indexOf('postingbody') !== -1;
@@ -17,6 +20,10 @@ utils.fetchApartments()
             .filter(x => x.content)
             .map(x => x.content)
             .join('');
+        let imageElement = findMatchingElems(elem => {
+          return elem.attributes && elem.attributes.id && elem.attributes.id.indexOf('thumbs') !== -1;
+        }, x)[0];
+        console.log(imageElement);
       });
   });
 
