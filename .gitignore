@@ -1,4 +1,8 @@
-node_modules/
+# package directories
+node_modules
+jspm_packages
 
-# locks
-.#*.*
+# Serverless directories
+.serverless
+serverless.yml
+serverless-handler.js
