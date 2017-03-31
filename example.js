@@ -15,14 +15,31 @@ const config = {
   unixChannel: 'mt-pleasant-apts-unix'
 };
 
+run(config);
 
-getLastChecked(config)
-  .then(notAfterUnixDate => fetchNotAfter(notAfterUnixDate, config))
-  // format for slack
-  .then(pages => _.map(pages, utils.parsePage));
-// post to slack and update last-looked timestamp
+function run(config) {
+  let now = moment().unix();
 
-
+  return getLastChecked(config)
+    .then(notAfterUnixDate => fetchNotAfter(notAfterUnixDate, config))
+    // post to slack and update last-looked timestamp
+    .then(parsed => _.map(parsed, utils.formatSlackMessage))
+    .then(formatted => {
+      return _.reduce(formatted, (accum, cur) => {
+        let postParams = _.defaults({
+          token: config.slackToken,
+          channel: config.channel,
+          // for some reason needs empty text param when attachments are specified.
+          text: ''
+        }, cur);
+        return accum
+          .then(() => utils.postToSlack(postParams))
+          .delay(config.waitInterval);
+      }, Bb.resolve());
+    })
+    // update unix timestamp channel
+    .then(() => setUnix(now, config));
+}
 
 
 function fetchNotAfter(notAfterUnixDate, config) {
@@ -30,57 +47,22 @@ function fetchNotAfter(notAfterUnixDate, config) {
     .then(matches => Bb.map(matches, match => {
       return utils.fetchIndividualListing(match)
         .then(utils.transformPage)
-        .then(utils.parsePage);
+        .then(utils.parsePage)
+        .then(parsed => ({parsed, link: match}));
     }))
     .then(jsonPages => {
-      console.log('%d pages', jsonPages.length);
+      console.log('%d total pages found', jsonPages.length);
       return _(jsonPages)
-        .filter(({times}) => {
-          return _.reduce(times, (accum, cur) => {
+        .filter(({parsed, link}) => {
+          return _.reduce(parsed.times, (accum, cur) => {
             let passed = cur > notAfterUnixDate;
             return passed;
           }, false);
         })
         .value();
-    });
+    })
+    .tap(x => console.log('%d pages within time range', x.length));
 }
-
-//   .then(matches => {
-//     console.log('found %d matches', matches.length);
-//     return Bb.map(matches, match => {
-//       return utils.fetchIndividualListing(match)
-//         .then(utils.transformPage)
-//         .then(utils.parsePage)
-//         .then(parsed => ({
-//           url: match,
-//           listing: parsed,
-//           link: match
-//         }))
-//         .then(utils.formatSlackMessage);
-//     });
-//   })
-//   .then(formatted => {
-//     debugger;
-//     let now = moment().unix();
-//     return _.reduce(formatted, (accum, cur) => {
-//       return accum
-//         .then(() => utils.postToSlack({
-//           token: config.slackToken,
-//           channel: config.channel,
-//           attachments: cur.attachments,
-//           // for some reason needs empty text param when attachments are specified.
-//           text: ''
-//         }))
-//         .delay(config.waitInterval);
-//     }, Bb.resolve())
-//       .then(() => {
-//         return utils.postToSlack({
-//           token: config.slackToken,
-//           channel: config.unixChannel,
-//           text: now + ''
-//         });
-//       });
-//   });
 
 function getLastChecked(config) {
   return utils.findChannelId({name: config.unixChannel, token: config.slackToken})
@@ -97,4 +79,12 @@ function getLastChecked(config) {
         return moment().subtract(...config.notAfterUnixDate).unix();
       }
     });
+}
+
+function setUnix(now, config) {
+  return utils.postToSlack({
+    token: config.slackToken,
+    channel: config.unixChannel,
+    text: now + ''
+  });
 }
