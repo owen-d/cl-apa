@@ -41,7 +41,6 @@ function run(config) {
     .then(() => setUnix(now, config));
 }
 
-
 function fetchNotAfter(notAfterUnixDate, config) {
   return utils.fetchApartments({notAfterUnixDate})
     .then(matches => Bb.map(matches, match => {
