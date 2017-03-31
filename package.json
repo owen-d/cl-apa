@@ -15,11 +15,11 @@
   "homepage": "https://github.com/owen-d/cl-apa",
   "dependencies": {
     "bluebird": "^3.5.0",
+    "geolib": "^2.0.22",
     "himalaya": "^0.2.6",
     "lodash": "^4.17.4",
     "moment-timezone": "^0.5.11",
     "request": "^2.81.0",
-    "slack": "^8.2.6",
-    "turf-distance": "^3.0.12"
+    "slack": "^8.2.6"
   }
 }

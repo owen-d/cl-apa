@@ -12,7 +12,15 @@ const config = {
   waitInterval: 2000,
   notAfterUnixDate: ['30', 'minutes'],
   channel: 'mt-pleasant-apts',
-  unixChannel: 'mt-pleasant-apts-unix'
+  unixChannel: 'mt-pleasant-apts-unix',
+  latLngFilter: {
+    max: 0.5,
+    unit: 'miles',
+    from: {
+      lat: 38.931417,
+      lng: -77.040392
+    }
+  }
 };
 
 run(config);
@@ -21,7 +29,7 @@ function run(config) {
   let now = moment().unix();
 
   return getLastChecked(config)
-    .then(notAfterUnixDate => fetchNotAfter(notAfterUnixDate, config))
+    .then(notAfterUnixDate => fetch({notAfterUnixDate, latLngFilter: config.latLngFilter}))
     // post to slack and update last-looked timestamp
     .then(parsed => _.map(parsed, utils.formatSlackMessage))
     .then(formatted => {
@@ -41,8 +49,8 @@ function run(config) {
     .then(() => setUnix(now, config));
 }
 
-function fetchNotAfter(notAfterUnixDate, config) {
-  return utils.fetchApartments({notAfterUnixDate})
+function fetch({notAfterUnixDate, latLngFilter}) {
+  return utils.fetchApartments({notAfterUnixDate, latLngFilter})
     .then(matches => Bb.map(matches, match => {
       return utils.fetchIndividualListing(match)
         .then(utils.transformPage)
